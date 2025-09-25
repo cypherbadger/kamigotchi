@@ -1,6 +1,7 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import anime from 'utils/anime';
 import { playClick } from 'utils/sounds';
 import { TextTooltip } from '../poppers';
 import { Popover } from '../poppers/Popover';
@@ -27,6 +28,8 @@ export function IconListButton({
   icon,
   tooltip,
   disabled,
+  blinkRed,
+  blinkDurationMs,
 }: {
   options: Option[];
   searchable?: boolean;
@@ -58,6 +61,8 @@ export function IconListButton({
   };
 
   disabled?: boolean;
+  blinkRed?: boolean;
+  blinkDurationMs?: number;
 }) {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -106,6 +111,26 @@ export function IconListButton({
     );
   };
 
+  // subtle red glow blink using anime.js when enabled
+  useEffect(() => {
+    const node = toggleRef.current;
+    if (!node) return;
+    anime.remove(node);
+    if (disabled || !blinkRed) {
+      node.style.boxShadow = '';
+      return;
+    }
+    anime({
+      targets: node,
+      boxShadow: ['0 0 0vw rgba(255, 64, 64, 0.0)', '0 0 0.6vw rgba(255, 64, 64, 0.65)'],
+      direction: 'alternate',
+      duration: blinkDurationMs ?? 2400,
+      easing: 'easeInOutSine',
+      loop: true,
+      autoplay: true,
+    });
+  }, [blinkRed, blinkDurationMs, disabled]);
+
   return (
     <Popover content={OptionsMap()} maxHeight={33} fullWidth={fullWidth} disabled={disabled}>
       <TextTooltip {...tooltip} text={tooltip?.text ?? ['']}>
@@ -122,6 +147,7 @@ export function IconListButton({
           balance={balance}
           corner={!balance}
           icon={icon}
+          ref={toggleRef}
         />
       </TextTooltip>
     </Popover>

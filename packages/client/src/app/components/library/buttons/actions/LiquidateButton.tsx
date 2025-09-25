@@ -34,6 +34,8 @@ export const LiquidateButton = (
       tooltip={{ text: [tooltipText] }}
       width={width}
       icon={{ inset: { x: 2 } }}
+      blinkRed={actionOptions.length > 0}
+      blinkDurationMs={2400}
     />
   );
 };
