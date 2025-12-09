@@ -81,6 +81,7 @@ export const AccountRegistrar: UIComponent = {
 
     const validations = useAccount((s) => s.validations);
     const setValidations = useAccount((s) => s.setValidations);
+    const setGuestMode = useAccount((s) => s.setGuestMode);
     const setAccount = useAccount((s) => s.setAccount);
     const setNetworkValidations = useNetwork((s) => s.setValidations);
 
@@ -156,6 +157,7 @@ export const AccountRegistrar: UIComponent = {
         gasHarasser: false,
       });
       toggleFixtures(true);
+      setGuestMode(true);
     };
 
     /////////////////

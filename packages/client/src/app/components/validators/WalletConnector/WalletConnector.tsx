@@ -43,6 +43,7 @@ export const WalletConnecter: UIComponent = {
     const { validations, setValidations } = useNetwork();
     const { toggleModals, toggleFixtures } = useVisibility();
     const { validators, setValidators } = useVisibility();
+    const { setAccount, setValidations: setAccountValidations, setGuestMode } = useAccount();
 
     const [isUpdating, setIsUpdating] = useState(false);
     const [state, setState] = useState('');
@@ -180,6 +181,22 @@ export const WalletConnecter: UIComponent = {
       toggleFixtures(true);
       setSelectedAddress('0x000000000000000000000000000000000000dEaD');
       setSigner(null);
+      setAccountValidations({ accountExists: true, operatorMatches: true, operatorHasGas: true });
+      setAccount({
+        id: '0x000000000000000000000000000000000000dEaD' as EntityID,
+        entity: 0 as EntityIndex,
+        index: 0,
+        name: 'Guest',
+        ownerAddress: '0x000000000000000000000000000000000000dEaD',
+        operatorAddress: '0x000000000000000000000000000000000000dEaD',
+      });
+      setGuestMode(true);
+      setValidators({
+        walletConnector: false,
+        accountRegistrar: false,
+        operatorUpdater: false,
+        gasHarasser: false,
+      });
     };
 
     /////////////////
