@@ -10,12 +10,14 @@ interface State {
   account: Account;
   validations: Validations;
   debug: Debug;
+  guestMode: boolean;
 }
 
 interface Actions {
   setAccount: (data: Account) => void;
   setDebug: (data: Debug) => void;
   setValidations: (data: Validations) => void;
+  setGuestMode: (guestMode: boolean) => void;
 }
 
 ////////////////
@@ -66,11 +68,13 @@ export const useAccount = create<State & Actions>((set) => {
       operatorMatches: false,
       operatorHasGas: false,
     },
+    guestMode: false,
   };
   return {
     ...initialState,
     setAccount: (data: Account) => set((state: State) => ({ ...state, account: data })),
     setDebug: (data: Debug) => set((state: State) => ({ ...state, debug: data })),
     setValidations: (data: Validations) => set((state: State) => ({ ...state, validations: data })),
+    setGuestMode: (guestMode: boolean) => set((state: State) => ({ ...state, guestMode })),
   };
 });

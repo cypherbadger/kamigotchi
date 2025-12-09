@@ -47,9 +47,11 @@ export const WalletConnecter: UIComponent = {
     const [isUpdating, setIsUpdating] = useState(false);
     const [state, setState] = useState('');
     const [chainMatches, setChainMatches] = useState(false);
+    const [bypassed, setBypassed] = useState(false);
 
     // update network settings/validations on relevant network updates
     useEffect(() => {
+      if (bypassed) return;
       if (!ready || !walletsReady) return;
       const chainMatches = chain?.id === DefaultChain.id;
       if (!isConnected) {
@@ -66,12 +68,14 @@ export const WalletConnecter: UIComponent = {
 
     // check whether the connected chain is correct
     useEffect(() => {
+      if (bypassed) return;
       const isCorrectChain = chain?.id === DefaultChain.id;
       if (isCorrectChain != chainMatches) setChainMatches(isCorrectChain);
-    }, [chain, isConnected]);
+    }, [chain, isConnected, bypassed]);
 
     // adjust visibility of windows based on above determination
     useEffect(() => {
+      if (bypassed) return;
       const isVisible = !validations.authenticated || !validations.chainMatches;
       if (isVisible) {
         toggleModals(false);
@@ -89,6 +93,7 @@ export const WalletConnecter: UIComponent = {
 
     // force logout the user when certain conditions are met:
     useEffect(() => {
+      if (bypassed) return;
       if (!authenticated) return; // wait for privy authentication
 
       // when the injected wallet is disconnected
@@ -167,6 +172,16 @@ export const WalletConnecter: UIComponent = {
       else if (state === 'unauthenticated') login();
     };
 
+    const handleBypass = () => {
+      setBypassed(true);
+      setState('bypassed');
+      setValidations({ authenticated: true, chainMatches: true });
+      setValidators({ walletConnector: false });
+      toggleFixtures(true);
+      setSelectedAddress('0x000000000000000000000000000000000000dEaD');
+      setSigner(null);
+    };
+
     /////////////////
     // INTERPRETATION
 
@@ -184,10 +199,12 @@ export const WalletConnecter: UIComponent = {
       if (state === 'disconnected') return `Your wallet is currently disconnected.`;
       if (state === 'wrongChain') return `You must connect to Yominet`;
       if (state === 'unauthenticated') return `You are currently logged out.`;
+      if (state === 'bypassed') return `Guest mode enabled (limited features).`;
       return '';
     };
 
     const getCurrentStep = () => {
+      if (state === 'bypassed') return 'BYPASS';
       if (state === 'disconnected') return 'CONNECTION';
       if (state === 'wrongChain') return 'NETWORK';
       return 'AUTHENTICATION';
@@ -197,6 +214,7 @@ export const WalletConnecter: UIComponent = {
       if (state === 'disconnected') return 'Connect';
       if (state === 'wrongChain') return 'Change Networks';
       if (state === 'unauthenticated') return 'Login';
+      if (state === 'bypassed') return '';
       return '';
     };
 
@@ -212,14 +230,21 @@ export const WalletConnecter: UIComponent = {
       >
         <Container>
           <Progress
-            statuses={{
-              connected: isConnected,
-              networked: chainMatches,
-              authenticated: authenticated,
-            }}
+            statuses={
+              bypassed
+                ? { connected: true, networked: true, authenticated: true }
+                : {
+                    connected: isConnected,
+                    networked: chainMatches,
+                    authenticated: authenticated,
+                  }
+            }
             step={getCurrentStep()}
           />
-          <ActionButton onClick={handleClick} text={getButtonLabel()} size='large' />
+          {state !== 'bypassed' && (
+            <ActionButton onClick={handleClick} text={getButtonLabel()} size='large' />
+          )}
+          <SkipButton onClick={handleBypass}>Continue without wallet</SkipButton>
         </Container>
       </ValidatorWrapper>
     );
@@ -233,4 +258,16 @@ const Container = styled.div`
   flex-flow: column nowrap;
   justify-content: space-around;
   align-items: center;
+`;
+
+const SkipButton = styled.button`
+  background: transparent;
+  border: none;
+  color: #4b126e;
+  font-size: 0.8vw;
+  text-decoration: underline;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.7;
+  }
 `;

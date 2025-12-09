@@ -74,6 +74,7 @@ export const NodeModal: UIComponent = {
         progress: 3600,
         skills: 3600,
         stats: 3600,
+        flags: 30,
         traits: 3600,
       };
 

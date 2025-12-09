@@ -26,6 +26,7 @@ export const Registration = ({
   };
   actions: {
     createAccount: (username: string) => EntityID | void;
+    skip: () => void;
   };
   utils: {
     setStep: (step: number) => void;
@@ -78,6 +79,10 @@ export const Registration = ({
     } catch (e) {
       console.error('ERROR CREATING ACCOUNT:', e);
     }
+  };
+
+  const handleSkip = () => {
+    actions.skip();
   };
 
   /////////////////
@@ -157,6 +162,7 @@ export const Registration = ({
             disabled={!!getError()}
             onClick={() => handleAccountCreation()}
           />
+          <Skip onClick={handleSkip}>Skip for now (guest mode)</Skip>
         </Row>
       )}
     </Container>
@@ -203,4 +209,17 @@ const Text = styled.div`
   font-size: 0.75vw;
   margin: 1vw 0 2vw 0;
   color: red;
+`;
+
+const Skip = styled.button`
+  margin-left: 0.6vw;
+  background: transparent;
+  border: none;
+  color: #4b126e;
+  font-size: 0.7vw;
+  text-decoration: underline;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.7;
+  }
 `;

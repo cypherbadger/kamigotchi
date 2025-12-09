@@ -1,3 +1,5 @@
+import styled from 'styled-components';
+
 import { useLayers } from 'app/root/hooks';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
@@ -101,6 +103,7 @@ export const KamiModal: UIComponent = {
     const [kami, setKami] = useState<Kami>();
     const [owner, setOwner] = useState<BaseAccount>(NullAccount);
     const [tick, setTick] = useState(Date.now());
+    const starterInfo = kami?.flags?.starter;
 
     /////////////////
     // SUBSCRIPTIONS
@@ -191,6 +194,22 @@ export const KamiModal: UIComponent = {
         overlay
         noPadding
       >
+        {starterInfo && (
+          <StarterPanel>
+            <h4>Starter Kami</h4>
+            <p>
+              Harvest cap:{' '}
+              <strong>
+                {starterInfo.earned}/{starterInfo.cap} MUSU
+              </strong>
+            </p>
+            <p>
+              {starterInfo.exhausted
+                ? 'This starter has harvested the maximum amount of MUSU it can earn.'
+                : `Harvests at ${(starterInfo.yieldBps / 100).toFixed(2)}% efficiency and stays inside the world.`}
+            </p>
+          </StarterPanel>
+        )}
         {tab === 'TRAITS' && <Traits kami={kami} />}
         {tab === 'SKILLS' && (
           <Skills
@@ -212,3 +231,22 @@ export const KamiModal: UIComponent = {
     );
   },
 };
+
+const StarterPanel = styled.div`
+  border-bottom: 0.15vw solid black;
+  background: #f6e9ff;
+  padding: 0.8vw 1vw;
+  text-align: left;
+
+  h4 {
+    font-size: 0.9vw;
+    margin-bottom: 0.2vw;
+    text-transform: uppercase;
+    color: #4b126e;
+  }
+
+  p {
+    font-size: 0.75vw;
+    margin: 0.15vw 0;
+  }
+`;

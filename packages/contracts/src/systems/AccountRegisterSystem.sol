@@ -5,6 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibStarterKami } from "libraries/LibStarterKami.sol";
 
 uint256 constant ID = uint256(keccak256("system.account.register"));
 
@@ -30,6 +31,7 @@ contract AccountRegisterSystem is System {
     uint256 accID = LibAccount.create(components, msg.sender, operator);
     LibAccount.setName(components, accID, name);
 
+    LibStarterKami.autoGrant(components, accID);
     LibAccount.updateLastTs(components, accID);
     return abi.encode(accID);
   }

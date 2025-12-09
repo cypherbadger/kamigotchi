@@ -9,6 +9,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibKami721 } from "libraries/LibKami721.sol";
 import { LibKami } from "libraries/LibKami.sol";
+import { LibStarterKami } from "libraries/LibStarterKami.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami721.unstake"));
 uint256 constant ROOM = 12;
@@ -38,6 +39,7 @@ contract Kami721UnstakeSystem is System {
 
     // checks before action
     LibKami.verifyAccount(components, kamiID, accID);
+    if (LibStarterKami.isStarter(components, kamiID)) revert("starter locked");
     LibKami.verifyState(components, kamiID, "RESTING");
 
     // actions to be taken upon bridging out

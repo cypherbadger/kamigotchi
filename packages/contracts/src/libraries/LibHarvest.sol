@@ -26,6 +26,7 @@ import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
+import { LibStarterKami } from "libraries/LibStarterKami.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPhase } from "libraries/utils/LibPhase.sol";
 import { LibTax } from "libraries/LibTax.sol";
@@ -83,8 +84,13 @@ library LibHarvest {
   function claim(IUintComp components, uint256 prodID, uint256 toID) internal returns (uint256) {
     // safely get and reset existing balance
     ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
+    uint256 kamiID = getKami(components, prodID);
     uint256 balance = valComp.safeGet(prodID);
-    if (balance > 0) valComp.set(prodID, 0);
+    if (balance > 0) {
+      valComp.set(prodID, 0);
+      balance = LibStarterKami.applyHarvestModifier(components, kamiID, balance);
+    }
+    if (balance == 0) return 0;
 
     // calculate tax
     (uint256[] memory recipientIDs, uint256[] memory toPay, uint256 amtLeft) = LibTax.getBillFor(

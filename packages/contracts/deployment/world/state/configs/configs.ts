@@ -2,6 +2,7 @@ import { AdminAPI } from '../../api';
 
 export async function initConfigs(api: AdminAPI) {
   await initBase(api);
+  await initStarter(api);
   await initLeaderboard(api);
   await initAccount(api);
   await initFriends(api);
@@ -60,6 +61,15 @@ export async function initProdConfigs(api: AdminAPI) {
 async function initBase(api: AdminAPI) {
   await api.config.set.string('BASE_KAMI_NAME', 'Kamigotchi ');
   await api.config.set.string('BASE_URI', 'i.test.kamigotchi.io/kami');
+}
+
+async function initStarter(api: AdminAPI) {
+  await api.config.set.bool('STARTER_KAMI_ENABLED', true);
+  await api.config.set.bool('STARTER_KAMI_AUTO_GRANT', true);
+  await api.config.set.number('STARTER_KAMI_INDEX_OFFSET', 1_000_000);
+  await api.config.set.number('STARTER_KAMI_HARVEST_CAP', 250);
+  await api.config.set.number('STARTER_KAMI_HARVEST_BPS', 2_500);
+  await api.config.set.string('STARTER_KAMI_NAME', 'Holo Kami ');
 }
 
 async function initLeaderboard(api: AdminAPI) {

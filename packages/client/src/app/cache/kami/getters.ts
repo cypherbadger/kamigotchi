@@ -2,9 +2,9 @@ import { EntityIndex, World } from 'engine/recs';
 
 import { Components } from 'network/';
 import { NullAccount, queryKamiAccount } from 'network/shapes/Account';
-import { hasFlag } from 'network/shapes/Flag';
 import { NullHarvest } from 'network/shapes/Harvest';
 import { KamiBattles, KamiSkills, queryKamiHarvest, queryKamiTraits } from 'network/shapes/Kami';
+import { getFlags as getNetworkKamiFlags } from 'network/shapes/Kami/flags';
 import { getSkills } from 'network/shapes/Kami/skills';
 import { queryKillsForKiller, queryKillsForVictim } from 'network/shapes/Kill';
 import { AccountOptions, getAccount } from '../account';
@@ -48,10 +48,7 @@ export const getKamiBattles = (
 // get the Flags settings for a Kami entity
 // TODO: implement cache for flags
 export const getKamiFlags = (world: World, comps: Components, entity: EntityIndex) => {
-  return {
-    namable: !hasFlag(world, comps, entity, 'NOT_NAMEABLE'),
-    skillReset: hasFlag(world, comps, entity, 'CAN_RESET_SKILLS'),
-  };
+  return getNetworkKamiFlags(world, comps, entity);
 };
 
 // get the Harvest object for a Kami entity

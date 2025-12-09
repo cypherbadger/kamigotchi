@@ -82,6 +82,7 @@ export const AccountRegistrar: UIComponent = {
     const validations = useAccount((s) => s.validations);
     const setValidations = useAccount((s) => s.setValidations);
     const setAccount = useAccount((s) => s.setAccount);
+    const setNetworkValidations = useNetwork((s) => s.setValidations);
 
     const [step, setStep] = useState(0);
 
@@ -145,6 +146,18 @@ export const AccountRegistrar: UIComponent = {
       return actionID;
     };
 
+    const skipAccount = () => {
+      setValidations({ accountExists: true, operatorMatches: true, operatorHasGas: true });
+      setNetworkValidations({ authenticated: true, chainMatches: true });
+      setValidators({
+        walletConnector: false,
+        accountRegistrar: false,
+        operatorUpdater: false,
+        gasHarasser: false,
+      });
+      toggleFixtures(true);
+    };
+
     /////////////////
     // RENDERING
 
@@ -157,7 +170,7 @@ export const AccountRegistrar: UIComponent = {
             selected: selectedAddress,
             burner: burnerAddress,
           }}
-          actions={{ createAccount }}
+          actions={{ createAccount, skip: skipAccount }}
           utils={{
             setStep,
             toggleFixtures,

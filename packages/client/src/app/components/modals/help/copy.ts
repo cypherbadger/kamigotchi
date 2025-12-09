@@ -43,6 +43,10 @@ const KamiCopy: PageCopy = {
     `Violence and Harmony determine a Kami's capacity for attack and defense. The Health threshold for liquidating a Kami on a Node is determined by the difference between the attacker's Violence and the defender's Harmony.`,
     ``,
     `Slots are mysterious. We'll explain more on them later.`,
+    ``,
+    `New players also receive a Starter Kami — a non-tradable spirit that stays inside the world. Starters harvest at reduced efficiency and have a small MUSU allowance, so you'll eventually want to mint or bridge a real Kamigotchi.`,
+    ``,
+    `Starter Kami can explore rooms and complete quests, but they cannot be bridged out or traded.`,
   ],
 };
 

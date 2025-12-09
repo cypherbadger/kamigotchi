@@ -1,6 +1,7 @@
 import { uuid } from '@mud-classic/utils';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 import {
   getAccount as _getAccount,
@@ -95,6 +96,7 @@ export const AccountModal: UIComponent = {
     const [isSelf, setIsSelf] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [accounts, setAccounts] = useState<Account[]>([]);
+    const [accountKamis, setAccountKamis] = useState<Kami[]>([]);
 
     /////////////////
     // SUBSCRIPTIONS
@@ -109,6 +111,8 @@ export const AccountModal: UIComponent = {
       const accountEntity = queryAccountByIndex(components, accountIndex);
       const account = getAccount(accountEntity ?? (0 as EntityIndex));
       setAccount(account);
+      if (accountEntity) setAccountKamis(getAccountKamis(accountEntity) as Kami[]);
+      else setAccountKamis([]);
     });
 
     // set the default subtab and tab when account index switches or modal is closed
@@ -213,6 +217,10 @@ export const AccountModal: UIComponent = {
         },
       });
     };
+    const starterKami = accountKamis.find((kami) => !!kami.flags?.starter);
+    const starterStats = starterKami?.flags?.starter;
+    const hasRealKami = accountKamis.some((kami) => !kami.flags?.starter);
+
     /////////////////
     // RENDERING
 
@@ -238,6 +246,26 @@ export const AccountModal: UIComponent = {
             getFriends,
           }}
         />
+        {starterStats && (
+          <StarterBanner>
+            <strong>Starter Kami unlocked.</strong>{' '}
+            {starterStats.exhausted ? (
+              <>They have harvested the maximum {starterStats.cap} MUSU they can hold.</>
+            ) : (
+              <>
+                Harvest cap:{' '}
+                <span>
+                  {starterStats.earned}/{starterStats.cap} MUSU
+                </span>
+                . Starter Kamis earn at {(starterStats.yieldBps / 100).toFixed(2)}% efficiency and
+                cannot leave the world.
+              </>
+            )}{' '}
+            {hasRealKami
+              ? 'Bridge or mint more Kamis to grow your collection.'
+              : 'Mint or bridge a real Kamigotchi to graduate from your starter.'}
+          </StarterBanner>
+        )}
         <Tabs tab={tab} setTab={setTab} isSelf={isSelf} />
         <Bottom
           key='bottom'
@@ -272,3 +300,24 @@ export const AccountModal: UIComponent = {
     );
   },
 };
+
+const StarterBanner = styled.div`
+  background: #f6e9ff;
+  border: 0.15vw solid black;
+  border-radius: 0.5vw;
+  margin: 0.6vw 1vw;
+  padding: 0.6vw 0.8vw;
+  font-size: 0.75vw;
+  line-height: 1.2vw;
+  color: #4b126e;
+  box-shadow: 0.2vw 0.2vw 0 black;
+
+  strong {
+    font-size: 0.8vw;
+    text-transform: uppercase;
+  }
+
+  span {
+    font-weight: 600;
+  }
+`;

@@ -34,6 +34,7 @@ export const KamiPortalModal: UIComponent = {
       const kamiRefreshOptions = {
         live: 2,
         progress: 3600,
+        flags: 10,
       };
 
       return {
@@ -67,6 +68,7 @@ export const KamiPortalModal: UIComponent = {
     const [selectedWild, setSelectedWild] = useState<Kami[]>([]);
     const [selectedWorld, setSelectedWorld] = useState<Kami[]>([]);
     const [tick, setTick] = useState(Date.now());
+    const [lockedStarters, setLockedStarters] = useState<Kami[]>([]);
 
     /////////////////
     // SUBSCRIPTIONS
@@ -103,9 +105,11 @@ export const KamiPortalModal: UIComponent = {
     useEffect(() => {
       if (!modals.bridgeERC721) return;
       const accountKamis = getAccountKamis(account.entity) as Kami[];
+      const starters = accountKamis.filter((kami) => !!kami.flags?.starter);
       const filteredKamis = accountKamis.filter(
-        (kami) => !onCooldown(kami) && !isHarvesting(kami) && !isDead(kami)
+        (kami) => !kami.flags?.starter && !onCooldown(kami) && !isHarvesting(kami) && !isDead(kami)
       );
+      setLockedStarters(starters);
       setWorldKamis(filteredKamis);
     }, [modals.bridgeERC721, tick]);
 
@@ -195,6 +199,11 @@ export const KamiPortalModal: UIComponent = {
         overlay
       >
         <Container>
+          {!!lockedStarters.length && (
+            <StarterNotice>
+              Starter Kami cannot leave the world. Upgrade them by minting a real Kamigotchi.
+            </StarterNotice>
+          )}
           <WorldKamis
             kamis={worldKamis}
             state={{ selectedWild, selectedWorld, setSelectedWorld }}
@@ -218,4 +227,20 @@ const Container = styled.div`
 
   display: flex;
   flex-flow: row nowrap;
+`;
+
+const StarterNotice = styled.div`
+  position: absolute;
+  top: 0.8vw;
+  left: 1vw;
+  z-index: 3;
+  background: #f4c2ff;
+  border: 0.15vw solid black;
+  border-radius: 0.4vw;
+  color: #4b126e;
+  font-size: 0.7vw;
+  font-weight: 600;
+  padding: 0.4vw 0.8vw;
+  text-transform: uppercase;
+  box-shadow: 0.2vw 0.2vw 0 black;
 `;

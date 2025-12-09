@@ -66,6 +66,17 @@ export const StatusDisplay = ({ kami, tick }: { kami: Kami; tick: number }) => {
         text = [`on ${node.name}`, `${harvestRate} ${item.name}/hr`, `${healthRate} HP/hr`];
       }
     }
+    if (kami.flags?.starter) {
+      const starter = kami.flags.starter;
+      text = text.concat([
+        '',
+        starter.exhausted
+          ? 'Starter Kami cap reached.'
+          : `Starter Kami: ${starter.earned}/${starter.cap} MUSU earned at ${(
+              starter.yieldBps / 100
+            ).toFixed(2)}% efficiency.`,
+      ]);
+    }
     return text;
   };
 

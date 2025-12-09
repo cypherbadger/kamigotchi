@@ -21,11 +21,16 @@ export const TitleBar = ({
   /////////////////
   // RENDER
 
+  const isStarter = !!kami.flags?.starter;
+
   return (
     <Container>
-      <Title key='title' onClick={onClick}>
-        {kami.name}
-      </Title>
+      <TitleGroup>
+        <Title key='title' onClick={onClick}>
+          {kami.name}
+        </Title>
+        {isStarter && <Badge>Starter</Badge>}
+      </TitleGroup>
       {show?.battery && <Health kami={kami} tick={tick} />}
       {show?.cooldown && (
         <Corner key='corner'>
@@ -47,9 +52,13 @@ const Container = styled.div`
   user-select: none;
 `;
 
+const TitleGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4vw;
+`;
+
 const Title = styled.div`
-  position: absolute;
-  z-index: 1;
   font-size: 0.75vw;
   margin-left: 0.6vw;
 
@@ -70,4 +79,15 @@ const Corner = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
+`;
+
+const Badge = styled.div`
+  background: #f4c2ff;
+  border: 0.1vw solid black;
+  border-radius: 0.3vw;
+  color: #4b126e;
+  font-size: 0.55vw;
+  font-weight: 600;
+  padding: 0.1vw 0.4vw;
+  text-transform: uppercase;
 `;

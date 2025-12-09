@@ -77,7 +77,7 @@ library LibKamiCreate {
     id = LibKami.genID(index);
     if (LibEntityType.checkAndSet(comps, id, "KAMI")) revert("kami already exists");
 
-    setBase(comps, id, index);
+    setBase(comps, id, index, GACHA_ID);
     uint32[] memory traits = setTraits(comps, id);
     setStats(comps, id, traits);
     setURI(comps, id, traits);
@@ -93,8 +93,8 @@ library LibKamiCreate {
   /////////////////
   // SETTERS
 
-  function setBase(IUintComp comps, uint256 id, uint32 index) internal {
-    IDOwnsKamiComponent(getAddrByID(comps, IDOwnsKamiCompID)).set(id, GACHA_ID); // seed in gacha
+  function setBase(IUintComp comps, uint256 id, uint32 index, uint256 ownerID) internal {
+    IDOwnsKamiComponent(getAddrByID(comps, IDOwnsKamiCompID)).set(id, ownerID);
     IndexKamiComponent(getAddrByID(comps, IndexKamiCompID)).set(id, index);
     NameComponent(getAddrByID(comps, NameCompID)).set(id, makeName(comps, index));
     StateComponent(getAddrByID(comps, StateCompID)).set(id, string("RESTING"));

@@ -33,10 +33,19 @@ export const KamiBlock = ({
     playClick();
   };
 
+  const isStarter = !!kami.flags?.starter;
+  const tooltipText = isStarter ? ['Starter Kamis cannot leave the world.', ...tooltip] : tooltip;
+  const isSelectable = select && !isStarter;
+
   return (
     <Container>
-      <TextTooltip text={tooltip}>
+      <TextTooltip text={tooltipText}>
         <Image src={kami.image} onClick={handleClick} />
+        {isStarter && (
+          <Overlay top={0.5} left={0.5}>
+            <Badge>Starter</Badge>
+          </Overlay>
+        )}
         <Overlay top={0.9} left={0.7}>
           <Grouping>
             <Text size={0.6}>Lvl</Text>
@@ -53,8 +62,8 @@ export const KamiBlock = ({
           <Overlay bottom={0.5} right={0.5}>
             <ClickBox
               type='checkbox'
-              disabled={!!select.isDisabled}
-              checked={!!select.isSelected}
+              disabled={isStarter || !!select.isDisabled}
+              checked={!isStarter && !!select.isSelected}
               onChange={select.onClick}
             />
           </Overlay>
@@ -105,4 +114,15 @@ const ClickBox = styled.input`
   height: 1.8vw;
   opacity: 0.9;
   user-select: none;
+`;
+
+const Badge = styled.div`
+  background: #f4c2ff;
+  border: 0.1vw solid black;
+  border-radius: 0.3vw;
+  color: #4b126e;
+  font-size: 0.55vw;
+  font-weight: 600;
+  padding: 0.1vw 0.4vw;
+  text-transform: uppercase;
 `;

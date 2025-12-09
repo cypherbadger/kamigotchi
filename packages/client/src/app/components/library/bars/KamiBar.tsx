@@ -51,6 +51,7 @@ export const KamiBar = ({
   const kamiModalOpen = useVisibility((s) => s.modals.kami);
   const setModals = useVisibility((s) => s.setModals);
   const [currentHealth, setCurrentHealth] = useState(0);
+  const isStarter = !!kami.flags?.starter;
 
   useEffect(() => {
     setCurrentHealth(calcHealth(kami));
@@ -199,6 +200,7 @@ export const KamiBar = ({
           <Icon src={getBodyIcon()} />
           <Icon src={getHandIcon()} />
         </TextTooltip>
+        {isStarter && <StarterBadge>Starter</StarterBadge>}
       </Left>
       <Middle percent={calcHealthPercent()} color={getStatusColor(calcHealthPercent())}>
         <Overlay top={0.18} left={0.15} passthrough>
@@ -296,4 +298,15 @@ const Icon = styled.img`
 
   user-select: none;
   user-drag: none;
+`;
+
+const StarterBadge = styled.div`
+  background: #f4c2ff;
+  border: 0.1vw solid black;
+  border-radius: 0.3vw;
+  color: #4b126e;
+  font-size: 0.55vw;
+  font-weight: 600;
+  padding: 0.1vw 0.4vw;
+  text-transform: uppercase;
 `;

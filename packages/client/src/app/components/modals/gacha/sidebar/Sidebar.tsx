@@ -157,6 +157,10 @@ export const Sidebar = ({
   return (
     <Container>
       <Tabs tab={tab} setTab={setTab} />
+      <StarterNote>
+        Minting a Kamigotchi upgrades you from the free starter and unlocks full MUSU yield plus
+        bridge access.
+      </StarterNote>
       <Controls
         actions={actions}
         controls={controls}
@@ -183,4 +187,16 @@ const Container = styled.div`
   flex-flow: column nowrap;
   justify-content: space-between;
   align-items: flex-start;
+`;
+
+const StarterNote = styled.div`
+  background: #f6e9ff;
+  border: 0.15vw solid black;
+  border-radius: 0.4vw;
+  color: #4b126e;
+  font-size: 0.7vw;
+  line-height: 1.1vw;
+  margin: 0.5vw;
+  padding: 0.4vw 0.6vw;
+  text-align: left;
 `;
