@@ -1,12 +1,17 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import styled from 'styled-components';
 
+import { MenuAvatar, MinaAvatar } from 'assets/images/icons/avatars';
+
+// TODO: make this not hardcoded
+const minaAvatar = (key: number | string) => <Avatar key={key} src={MinaAvatar} alt='Mina' />;
+const menuAvatar = (key: number | string) => <Avatar key={key} src={MenuAvatar} alt='Menu' />;
+
 const boldName = (text: string, key: number | string) => (
   <strong style={{ color: 'inherit' }} key={key}>
     {text}
   </strong>
 );
-
 export const useTypewriter = (
   text: string,
   speed: number,
@@ -29,7 +34,7 @@ export const useTypewriter = (
     if (interrupted) {
       const parts = text.split(/(MINA|MENU)/g);
       const result = parts.map((part, i) =>
-        /^(MINA|MENU)$/.test(part) ? boldName(part, i) : part
+        /^(MINA)$/.test(part) ? minaAvatar(i) : /^(MENU)$/.test(part) ? menuAvatar(i) : part
       );
       setDisplayedText(result);
       indexRef.current = text.length;
@@ -48,8 +53,12 @@ export const useTypewriter = (
       const remaining = text.substring(indexRef.current);
       const Mina = remaining.startsWith('MINA');
       const Menu = remaining.startsWith('MENU');
+
       if (Mina || Menu) {
-        setDisplayedText((prev) => [...prev, boldName(Mina ? 'MINA' : 'MENU', indexRef.current)]);
+        setDisplayedText((prev) => [
+          ...prev,
+          Mina ? minaAvatar(indexRef.current) : menuAvatar(indexRef.current),
+        ]);
         indexRef.current += 4;
       } else {
         setDisplayedText((prev) => [...prev, remaining[0]]);
@@ -242,4 +251,13 @@ const Arrow = styled.span`
       opacity: 1;
     }
   }
+`;
+
+const Avatar = styled.img`
+  width: 3vw;
+  height: 3vw;
+  vertical-align: middle;
+  margin-right: 0.3em;
+  border-radius: 50%;
+  object-fit: cover;
 `;

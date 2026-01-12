@@ -28,10 +28,8 @@ export const Dialogue = ({
   const [mode, setMode] = useState<MODE>('INTRO');
   const [wasToggled, setWasToggled] = useState(false);
 
-  const introRef = useRef<HTMLDivElement>(null);
-  const outroRef = useRef<HTMLDivElement>(null);
-  const isUserScrollingIntroRef = useRef(false);
-  const isUserScrollingOutroRef = useRef(false);
+  const introBottomRef = useRef<HTMLDivElement>(null);
+  const outroBottomRef = useRef<HTMLDivElement>(null);
 
   // shows completion text by default intro text as fallback
 
@@ -41,25 +39,9 @@ export const Dialogue = ({
     }
   }, [isModalOpen, completionText, isComplete]);
 
-  // if the user is not scrolling autoscroll to track generated text
-  const handleScroll = (
-    ref: React.RefObject<HTMLDivElement>,
-    isUserScrollingRef: React.MutableRefObject<boolean>
-  ) => {
-    if (ref.current && !isUserScrollingRef.current) {
-      ref.current.scrollTop = ref.current.scrollHeight;
-    }
-  };
-
-  // determine whether the user is scrolling based on scroll position
-  const handleUserScroll = (
-    ref: React.RefObject<HTMLDivElement>,
-    scrollingRef: React.MutableRefObject<boolean>
-  ) => {
-    if (!ref.current) return;
-    const { scrollTop, scrollHeight, clientHeight } = ref.current;
-    const isAtBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 5;
-    scrollingRef.current = !isAtBottom;
+  // autoscroll when new text is generated
+  const handleScroll = (bottomRef: React.RefObject<HTMLDivElement>) => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   // trigger a toggle between the two modes
@@ -78,42 +60,33 @@ export const Dialogue = ({
           Intro:
         </Divider>
       )}
-      <Text
-        ref={introRef}
-        isExpanded={mode === 'INTRO'}
-        color={color}
-        onScroll={() => handleUserScroll(introRef, isUserScrollingIntroRef)}
-      >
+      <Text isExpanded={mode === 'INTRO'} color={color}>
         {!isAccepted ? (
           <TypewriterComponent
             text={text}
             multiLine
             speed={15}
             retrigger={`${isModalOpen}${wasToggled}`}
-            onUpdate={() => handleScroll(introRef, isUserScrollingIntroRef)}
+            onUpdate={() => handleScroll(introBottomRef)}
           />
         ) : (
           <TypewriterComponent text={text} interrupted />
         )}
+        <div ref={introBottomRef} />
       </Text>
       {!!completionText && (
         <>
           <Divider color={color} expanded={mode === 'OUTRO'} onClick={toggleSections}>
             Outro:
           </Divider>
-          <Text
-            ref={outroRef}
-            isExpanded={mode === 'OUTRO'}
-            color={color}
-            onScroll={() => handleUserScroll(outroRef, isUserScrollingOutroRef)}
-          >
+          <Text isExpanded={mode === 'OUTRO'} color={color}>
             {isComplete && justCompleted ? (
               <TypewriterComponent
                 text={completionText}
                 multiLine
                 speed={15}
                 retrigger={`${isModalOpen}${wasToggled}${justCompleted}`}
-                onUpdate={() => handleScroll(outroRef, isUserScrollingOutroRef)}
+                onUpdate={() => handleScroll(outroBottomRef)}
                 onAllLinesComplete={onOutroFinished}
               />
             ) : isComplete && !justCompleted ? (
@@ -124,6 +97,7 @@ export const Dialogue = ({
                 text={['Empty for now, finish this quest and maybe then...']}
               />
             )}
+            <div ref={outroBottomRef} />
           </Text>
         </>
       )}
