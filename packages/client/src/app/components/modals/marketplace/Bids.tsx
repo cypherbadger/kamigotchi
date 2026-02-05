@@ -9,7 +9,8 @@ export const Bids = ({ isVisible }: { isVisible: boolean }) => {
 };
 
 const Tab = styled.div<{ isVisible: boolean }>`
-  ${({ isVisible }) => (isVisible ? `display: flex; flex-direction: column;` : `display: none;`)}
+  ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
+  flex-direction: column;
   width: 100%;
   min-height: 10vw;
 `;
