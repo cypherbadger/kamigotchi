@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { calcListingBuyPrice } from 'app/cache/npc';
-import { Overlay, Pairing, TextTooltip } from 'app/components/library';
+import { Pairing, TextTooltip } from 'app/components/library';
 import { clickFx, hoverFx } from 'app/styles/effects';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { PricingIcons } from 'assets/images/icons/pricing';
@@ -76,7 +76,10 @@ export const CatalogRow = ({
 
     const effectsList =
       item.effects?.use?.length > 0
-        ? utils.parseAllos(item.effects.use).map((entry) => entry?.description ?? '').join('\n')
+        ? utils
+            .parseAllos(item.effects.use)
+            .map((entry) => entry?.description ?? '')
+            .join('\n')
         : 'None';
     tooltip.push(`Effects: ${effectsList}`);
 
@@ -110,26 +113,17 @@ export const CatalogRow = ({
         <Image src={listing.item.image} isInCart={isInCart()} />
       </TextTooltip>
       <Details>
-        <Pairing
-          icon={getPricingIcon(listing)}
-          text={item.name}
-          scale={0.9}
-          tooltip={getPricingTooltip()}
-        />
+        <Pairing icon={getPricingIcon(listing)} text={item.name} tooltip={getPricingTooltip()} />
         <Pairing
           icon={getItemImage(payItem.name)}
           text={calcListingBuyPrice(listing, 1).toLocaleString()}
-          scale={0.9}
         />
-      </Details>
-      <Overlay bottom={0.3} right={0.6} orientation='row'>
         <Pairing
           icon={MenuIcons.inventory}
           text={getInventoryQuantity().toLocaleString()}
-          scale={0.75}
           reverse
         />
-      </Overlay>
+      </Details>
     </Container>
   );
 };
@@ -139,8 +133,8 @@ const Container = styled.div<{
   effectScale: number;
 }>`
   position: relative;
-  border: 0.15vw solid black;
-  border-radius: 0.4vw;
+  border: 0.15em solid black;
+  border-radius: 0.4em;
   background-color: ${({ isInCart }) => (isInCart ? '#bbb' : '#fff')};
 
   display: flex;
@@ -158,19 +152,32 @@ const Container = styled.div<{
 `;
 
 const Image = styled.img<{ isInCart: boolean }>`
-  border-right: 0.15vw solid black;
-  border-radius: 0.25vw 0 0 0.25vw;
-  width: 4.5vw;
-  padding: 0.45vw;
+  border-right: 0.15em solid black;
+  border-radius: 0.25em 0 0 0.25em;
+  width: 4.5em;
+  padding: 0.45em;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
+
+  @media (max-aspect-ratio: 11/16) or (width < 900px) {
+    width: 3em;
+    padding: 0.3em;
+  }
 `;
 
 const Details = styled.div`
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: row wrap;
   justify-content: space-around;
   align-items: flex-start;
   height: 100%;
-  padding: 0.5vw;
+  padding: 0.5em;
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+
+  @media (max-aspect-ratio: 11/16) or (width < 900px) {
+    padding: 0.3em;
+    font-size: 0.85em;
+  }
 `;

@@ -122,7 +122,7 @@ export const MerchantModal: UIComponent = {
     // DISPLAY
 
     return (
-      <ModalWrapper id='merchant' canExit overlay>
+      <ModalWrapper id='merchant' canExit overlay noScroll>
         <Header merchant={merchant} player={account} balance={musuBalance} />
         <Body>
           <Catalog
@@ -143,10 +143,11 @@ export const MerchantModal: UIComponent = {
 };
 
 const Body = styled.div`
-  border: solid black 0.15vw;
-  border-radius: 0.45vw;
-  margin: 0 1.2vw 1.2vw 1.2vw;
-  min-height: 70%;
+  border: solid black 0.15em;
+  border-radius: 0.45em;
+  margin: 0 1.2em 1.2em 1.2em;
+  flex: 1;
+  min-height: 0;
   user-select: none;
   overflow: hidden;
 

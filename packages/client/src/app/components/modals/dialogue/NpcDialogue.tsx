@@ -109,13 +109,13 @@ const Text = styled.div<{
   position: relative;
   text-align: justify;
   width: 100%;
-  padding: 0vw 1vw;
+  padding: 0em 1em;
   flex-grow: 1;
   flex-flow: column nowrap;
   justify-content: flex-start;
   top: 0;
-  font-size: 1vw;
-  line-height: 2vw;
+  font-size: 1em;
+  line-height: 2em;
   white-space: pre-line;
   word-wrap: break-word;
   overflow-y: auto;
@@ -125,11 +125,11 @@ const Text = styled.div<{
     visibility 0.3s ease;
   ::-webkit-scrollbar {
     background: transparent;
-    width: 0.3vw;
+    width: 0.3em;
   }
   ::-webkit-scrollbar-thumb {
     background-color: ${({ color }) => color || 'black'};
-    border-radius: 0.3vw;
+    border-radius: 0.3em;
     background-clip: padding-box;
   }
 `;
@@ -137,7 +137,7 @@ const Text = styled.div<{
 const ButtonRow = styled.div`
   position: absolute;
   right: 2%;
-  top: -2vw;
+  top: -3em;
   z-index: 6;
   display: flex;
 `;
@@ -158,11 +158,11 @@ const NpcSprite = styled.img`
 
 const NpcName = styled.div`
   color: black;
-  border: solid black 0.15vw;
-  padding: 0.3vw;
-  font-size: min(2vw, 2vh);
+  border: solid black 0.15em;
+  padding: 0.3em;
+  font-size: min(2em, 2vh);
   z-index: 3;
-  box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 1);
+  box-shadow: 0 0.1em 0.2em rgba(0, 0, 0, 1);
   background-color: white;
 `;
 
@@ -170,13 +170,13 @@ const Bottom = styled.div<{ hasQuests: boolean }>`
   position: relative;
   display: flex;
   flex-flow: row nowrap;
-  border-top: solid grey 0.15vw;
+  border-top: solid grey 0.15em;
   height: ${({ hasQuests }) => (hasQuests ? '60%' : '40%')};
   transition: height 0.3s ease;
 `;
 
 const OptionColumn = styled.div<{ color: string }>`
-  margin-top: 0.5vw;
+  margin-top: 0.5em;
   position: absolute;
   right: 0;
   top: 0;
@@ -186,41 +186,41 @@ const OptionColumn = styled.div<{ color: string }>`
   height: 100%;
   justify-content: flex-start;
   align-items: flex-end;
-  gap: 0.9vw;
-  padding-top: 1vw;
-  padding-right: 1vw;
+  gap: 0.9em;
+  padding-top: 1em;
+  padding-right: 1em;
   overflow-y: auto;
   ::-webkit-scrollbar {
     background: transparent;
-    width: 0.3vw;
+    width: 0.3em;
   }
   ::-webkit-scrollbar-thumb {
     background-color: ${({ color }) => color};
-    border-radius: 0.3vw;
+    border-radius: 0.3em;
     background-clip: padding-box;
   }
 `;
 
 const OptionsLabel = styled.div<{ color?: string }>`
-  font-size: 0.9vw;
+  font-size: 0.9em;
   color: ${({ color }) => color};
 `;
 
 const Option = styled.button<{ color?: string }>`
   position: relative;
   color: ${({ color }) => color || 'black'};
-  border: solid black 0.15vw;
-  padding: 0.1vw;
+  border: solid black 0.15em;
+
   text-wrap: wrap;
-  font-size: 0.7vw;
+  font-size: 0.7em;
   z-index: 3;
-  box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 1);
+  box-shadow: 0 0.1em 0.2em rgba(0, 0, 0, 1);
   cursor: pointer;
   width: 55%;
   max-width: fit-content;
-  padding: 0 0.5vw;
-  border-radius: 0.3vw;
-  line-height: 1.3vw;
+  padding: 0.35em;
+  border-radius: 0.3em;
+  line-height: 1.3em;
   background-color: white;
   &:disabled {
     opacity: 0.5;
@@ -231,13 +231,13 @@ const Option = styled.button<{ color?: string }>`
 const Message = styled.div<{ color?: string }>`
   position: relative;
   color: ${({ color }) => color || 'black'};
-  padding: 0.2vw 0.3vw 0vw 0.3vw;
-  font-size: 0.7vw;
+  padding: 0.35em;
+  font-size: 0.7em;
   z-index: 3;
-  box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 1);
+  box-shadow: 0 0.1em 0.2em rgba(0, 0, 0, 1);
   cursor: pointer;
 
-  border-radius: 0.3vw;
-  line-height: 1.3vw;
+  border-radius: 0.3em;
+  line-height: 1.3em;
   background-color: white;
 `;
