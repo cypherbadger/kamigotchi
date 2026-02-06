@@ -178,6 +178,7 @@ const PriceInput = styled.input`
   height: 2.5vw;
   padding: 0.3vw 0.4vw;
   border: 0.15vw solid black;
+  border-radius: 0.6vw;
   outline: none;
   background: white;
 `;
