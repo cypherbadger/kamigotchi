@@ -11,6 +11,8 @@ export const MyOrders = ({ isVisible }: { isVisible: boolean }) => {
 const Tab = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
   flex-direction: column;
+  flex: 1;
+  overflow: auto;
   width: 100%;
   min-height: 10vw;
 `;
