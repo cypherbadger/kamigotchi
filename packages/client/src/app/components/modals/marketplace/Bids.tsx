@@ -48,7 +48,13 @@ export const Bids = ({
     <>
       <Tab isVisible={isVisible}>
         <SellButtonWrapper>
-          <IconButton text='Sell' onClick={() => { onCloseCreateOrder(); setShowSelectKami(true); }} />
+          <IconButton
+            text='Sell'
+            onClick={() => {
+              onCloseCreateOrder();
+              setShowSelectKami(true);
+            }}
+          />
         </SellButtonWrapper>
         <Placeholder>Bids coming soon...</Placeholder>
       </Tab>
@@ -125,14 +131,16 @@ const HeaderTitle = styled.span`
 const KamiGrid = styled.div`
   display: flex;
   flex-flow: row wrap;
+  justify-content: center;
+
   gap: 0.4vw;
   padding: 0.6vw;
 `;
 
 const KamiSlot = styled.div`
   position: relative;
-  width: 3.5vw;
-  height: 3.5vw;
+  width: 5vw;
+  height: 5vw;
   border: 0.15vw solid black;
   border-radius: 0.4vw;
   cursor: pointer;
@@ -150,7 +158,7 @@ const KamiImage = styled.img`
 
 const Checkbox = styled.input`
   position: absolute;
-  bottom: 0.1vw;
+  top: 0.1vw;
   right: 0.1vw;
   width: 0.9vw;
   height: 0.9vw;

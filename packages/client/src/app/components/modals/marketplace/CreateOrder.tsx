@@ -49,7 +49,7 @@ export const CreateOrder = ({
     <Container isVisible={isVisible}>
       <Header>
         <HeaderTitle>Create order</HeaderTitle>
-        <IconButton text='X' onClick={onClose} />
+        <IconButton text='X' onClick={onClose} scale={1.5} />
       </Header>
       <Body>
         <Row style={{ alignItems: `center` }}>
