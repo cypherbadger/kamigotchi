@@ -12,9 +12,11 @@ type OrderType = 'Sell' | 'Buy';
 
 export const CreateOrder = ({
   isVisible,
+  onClose,
   utils,
 }: {
   isVisible: boolean;
+  onClose: () => void;
   utils: {
     getAccountKamis: () => Kami[];
   };
@@ -45,7 +47,10 @@ export const CreateOrder = ({
 
   return (
     <Container isVisible={isVisible}>
-      <Header>Create order</Header>
+      <Header>
+        <HeaderTitle>Create order</HeaderTitle>
+        <IconButton text='X' onClick={onClose} />
+      </Header>
       <Body>
         <Row style={{ alignItems: `center` }}>
           <Label>I want to:</Label>
@@ -86,10 +91,16 @@ const Container = styled.div<{ isVisible: boolean }>`
 `;
 
 const Header = styled.div`
+  display: flex;
+  align-items: center;
   background-color: rgb(221, 221, 221);
   padding: 0.8vw;
   font-size: 1.2vw;
-  text-align: left;
+`;
+
+const HeaderTitle = styled.span`
+  flex: 1;
+  text-align: center;
 `;
 
 const Body = styled.div`

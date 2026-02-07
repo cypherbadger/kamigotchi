@@ -19,7 +19,8 @@ export const MarketPlaceModal: UIComponent = {
     const [tab, setTab] = useState('listings');
     const [showCreateOrder, setShowCreateOrder] = useState(false);
 
-    const toggleCreateOrder = () => setShowCreateOrder((prev) => !prev);
+    const openCreateOrder = () => setShowCreateOrder(true);
+    const closeCreateOrder = () => setShowCreateOrder(false);
 
     const { utils } = (() => {
       const { network } = useLayers();
@@ -39,11 +40,11 @@ export const MarketPlaceModal: UIComponent = {
         header={<ModalHeader title='Marketplace' icon={VendIcon} />}
         canExit
       >
-        <Tabs tab={tab} setTab={setTab} onCreateOrder={toggleCreateOrder} />
+        <Tabs tab={tab} setTab={setTab} onCreateOrder={openCreateOrder} />
         <Listings isVisible={tab === 'listings'} />
-        <Bids isVisible={tab === 'bids'} />
+        <Bids isVisible={tab === 'bids'} showCreateOrder={showCreateOrder} onCloseCreateOrder={closeCreateOrder} utils={utils} />
         <MyOrders isVisible={tab === 'myOrders'} />
-        <CreateOrder isVisible={showCreateOrder} utils={utils} />
+        <CreateOrder isVisible={showCreateOrder} onClose={closeCreateOrder} utils={utils} />
       </ModalWrapper>
     );
   },

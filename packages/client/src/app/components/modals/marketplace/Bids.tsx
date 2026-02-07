@@ -1,10 +1,81 @@
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-export const Bids = ({ isVisible }: { isVisible: boolean }) => {
+import { isResting } from 'app/cache/kami';
+import { IconButton } from 'app/components/library';
+import { Kami } from 'network/shapes/Kami';
+
+export const Bids = ({
+  isVisible,
+  showCreateOrder,
+  onCloseCreateOrder,
+  utils,
+}: {
+  isVisible: boolean;
+  showCreateOrder: boolean;
+  onCloseCreateOrder: () => void;
+  utils: {
+    getAccountKamis: () => Kami[];
+  };
+}) => {
+  const [selectedKamis, setSelectedKamis] = useState<Set<number>>(new Set());
+  const [showSelectKami, setShowSelectKami] = useState(false);
+
+  useEffect(() => {
+    if (showCreateOrder) setShowSelectKami(false);
+  }, [showCreateOrder]);
+
+  const restingKamis = useMemo(() => {
+    return utils.getAccountKamis().filter((kami) => isResting(kami));
+  }, [utils]);
+
+  const toggleKami = (index: number) => {
+    setSelectedKamis((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
+
+  const handleSell = () => {};
+  const handleClear = () => {
+    setSelectedKamis(new Set());
+    setShowSelectKami(false);
+  };
+
   return (
-    <Tab isVisible={isVisible}>
-      <Placeholder>Bids coming soon...</Placeholder>
-    </Tab>
+    <>
+      <Tab isVisible={isVisible}>
+        <SellButtonWrapper>
+          <IconButton text='Sell' onClick={() => { onCloseCreateOrder(); setShowSelectKami(true); }} />
+        </SellButtonWrapper>
+        <Placeholder>Bids coming soon...</Placeholder>
+      </Tab>
+      <BottomSection isVisible={isVisible && !showCreateOrder && showSelectKami}>
+        <Header>
+          <HeaderTitle>Select Your Kami</HeaderTitle>
+          <IconButton text='X' onClick={() => setShowSelectKami(false)} />
+        </Header>
+        <KamiGrid>
+          {restingKamis.map((kami) => (
+            <KamiSlot key={kami.index} onClick={() => toggleKami(kami.index)}>
+              <KamiImage src={kami.image} alt={kami.name} />
+              <Checkbox
+                type='checkbox'
+                checked={selectedKamis.has(kami.index)}
+                onChange={() => toggleKami(kami.index)}
+                onClick={(e) => e.stopPropagation()}
+              />
+            </KamiSlot>
+          ))}
+        </KamiGrid>
+        <Actions>
+          <IconButton text='Sell' onClick={handleSell} />
+          <IconButton text='Clear' onClick={handleClear} />
+        </Actions>
+      </BottomSection>
+    </>
   );
 };
 
@@ -17,9 +88,81 @@ const Tab = styled.div<{ isVisible: boolean }>`
   min-height: 10vw;
 `;
 
+const SellButtonWrapper = styled.div`
+  width: fit-content;
+  padding: 0.4vw;
+`;
+
 const Placeholder = styled.div`
   padding: 1vw;
   text-align: center;
   color: #666;
   font-size: 0.9vw;
+`;
+
+const BottomSection = styled.div<{ isVisible: boolean }>`
+  ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
+  flex-direction: column;
+  flex: 0 0 45%;
+  overflow: auto;
+  border-top: 0.15vw solid black;
+  width: 100%;
+`;
+
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: rgb(221, 221, 221);
+  padding: 0.8vw;
+  font-size: 1.2vw;
+`;
+
+const HeaderTitle = styled.span`
+  flex: 1;
+  text-align: center;
+`;
+
+const KamiGrid = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  gap: 0.4vw;
+  padding: 0.6vw;
+`;
+
+const KamiSlot = styled.div`
+  position: relative;
+  width: 3.5vw;
+  height: 3.5vw;
+  border: 0.15vw solid black;
+  border-radius: 0.4vw;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const KamiImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.3vw;
+`;
+
+const Checkbox = styled.input`
+  position: absolute;
+  bottom: 0.1vw;
+  right: 0.1vw;
+  width: 0.9vw;
+  height: 0.9vw;
+  cursor: pointer;
+  accent-color: rgb(203, 186, 61);
+`;
+
+const Actions = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  gap: 0.6vw;
+  padding: 0.6vw;
+  margin-top: auto;
 `;
