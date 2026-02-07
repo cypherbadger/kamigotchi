@@ -61,7 +61,7 @@ export const Bids = ({
       <BottomSection isVisible={isVisible && !showCreateOrder && showSelectKami}>
         <Header>
           <HeaderTitle>Select Your Kami</HeaderTitle>
-          <IconButton text='X' onClick={() => setShowSelectKami(false)} />
+          <IconButton text='X' onClick={() => setShowSelectKami(false)} scale={1.5} />
         </Header>
         <KamiGrid>
           {restingKamis.map((kami) => (
