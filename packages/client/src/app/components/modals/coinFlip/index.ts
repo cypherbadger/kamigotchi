@@ -1,0 +1,1 @@
+export { CoinFlipModal } from './CoinFlip';

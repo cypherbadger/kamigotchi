@@ -3,8 +3,10 @@ import { useEffect, useState } from 'react';
 
 import { IconListButton } from 'app/components/library';
 import { useVisibility } from 'app/stores';
+import { triggerCoinFlipModal } from 'app/triggers';
 import { LogoutIcon } from 'assets/images/icons/actions';
 import { HelpIcon, MoreIcon, ResetIcon, SettingsIcon } from 'assets/images/icons/menu';
+import { ItemImages } from 'assets/images/items';
 import { TokenIcons } from 'assets/images/tokens';
 import { useBridgeOpener } from 'network/utils/hooks';
 
@@ -107,6 +109,7 @@ export const MoreMenuButton = () => {
     <IconListButton
       img={MoreIcon}
       options={[
+        { text: 'Coin Flip', image: ItemImages.musu, onClick: triggerCoinFlipModal },
         { text: 'Bridge', image: TokenIcons.init, onClick: openBridge },
         { text: 'Settings', disabled, image: SettingsIcon, onClick: toggleSettings },
         { text: 'Help', image: HelpIcon, onClick: toggleHelp },

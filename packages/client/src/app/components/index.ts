@@ -9,6 +9,7 @@ import { ActionQueue } from './fixtures/queue';
 
 import { AccountModal } from './modals/account';
 import { ChatModal } from './modals/chat';
+import { CoinFlipModal } from './modals/coinFlip';
 import { CraftingModal } from './modals/crafting';
 import { DialogueModal } from './modals/dialogue';
 import { FundOperator } from './modals/FundOperator';
@@ -188,6 +189,10 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: TempleOfTheWheel,
     gridConfig: { colStart: 36, colEnd: 65, rowStart: 20, rowEnd: 80 },
+  },
+  {
+    uiComponent: CoinFlipModal,
+    gridConfig: { colStart: 30, colEnd: 70, rowStart: 15, rowEnd: 85 },
   },
   {
     uiComponent: RevealModal,

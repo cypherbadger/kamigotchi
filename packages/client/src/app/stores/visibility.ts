@@ -42,6 +42,7 @@ export interface Modals {
   bridgeERC20: boolean;
   bridgeERC721: boolean;
   chat: boolean;
+  coinFlip: boolean;
   crafting: boolean;
   dialogue: boolean;
   emaBoard: boolean;
@@ -73,6 +74,7 @@ export const toggleModals = (isOn: boolean): Modals => ({
   bridgeERC20: isOn,
   bridgeERC721: isOn,
   chat: isOn,
+  coinFlip: isOn,
   crafting: isOn,
   dialogue: isOn,
   emaBoard: isOn,
@@ -125,6 +127,7 @@ export const useVisibility = create<State & Actions>((set) => {
       bridgeERC20: false,
       bridgeERC721: false,
       chat: false,
+      coinFlip: false,
       crafting: false,
       questDialogue: false,
       dialogue: false,
