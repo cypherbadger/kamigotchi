@@ -83,8 +83,7 @@ export const CoinFlipModal: UIComponent = {
         params: [choice, wager],
         description: `Flipping coin: ${wager} MUSU on ${choiceLabel}`,
         execute: async () => {
-          return (api.player as any).coinFlip?.(choice, wager)
-            ?? Promise.reject('CoinFlip system not deployed');
+          return api.player.coinFlip(choice, wager);
         },
       });
 

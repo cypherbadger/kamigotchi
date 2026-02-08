@@ -22,6 +22,12 @@ importers:
       assets:
         specifier: ^3.0.1
         version: 3.0.1
+      engine:
+        specifier: ^1.0.0
+        version: 1.0.0
+      ethers:
+        specifier: ^6.15.0
+        version: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       network:
         specifier: ^0.7.0
         version: 0.7.0
@@ -4590,6 +4596,14 @@ packages:
     resolution: {integrity: sha512-fTyLNf/9V24y5zO83f4DAEuvaKj7MWBixbnqdZneAhsv1r21yQ/6ogZfvXHmphJAHsz4DhuOwHeJKVbGqqvk0Q==}
     engines: {node: '>=4'}
 
+  assign-deep@1.0.1:
+    resolution: {integrity: sha512-CSXAX79mibneEYfqLT5FEmkqR5WXF+xDRjgQQuVf6wSCXCYU8/vHttPidNar7wJ5BFmKAo8Wei0rCtzb+M/yeA==}
+    engines: {node: '>=6'}
+
+  assign-symbols@2.0.2:
+    resolution: {integrity: sha512-9sBQUQZMKFKcO/C3Bo6Rx4CQany0R0UeVcefNGRRdW2vbmaMOhV1sbmlXcQLcD56juLXbSGTBm0GGuvmrAF8pA==}
+    engines: {node: '>=6'}
+
   ast-parents@0.0.1:
     resolution: {integrity: sha512-XHusKxKz3zoYk1ic8Un640joHbFMhbqneyoZfoKnEGtf2ey9Uh/IdpcQplODdO/kENaMIWsD0nJm4+wX3UNLHA==}
 
@@ -5426,6 +5440,10 @@ packages:
   engine.io-parser@5.2.3:
     resolution: {integrity: sha512-HqD3yTBfnBxIrbnM1DoD6Pcq8NECnh8d4As1Qgh0z5Gg3jRRIqijury0CL3ghu/edArpUYiYqQiDUQBIs4np3Q==}
     engines: {node: '>=10.0.0'}
+
+  engine@1.0.0:
+    resolution: {integrity: sha512-Rv6w3o7jiqPb5h/5Mar4yPzbWoow0CsSW8otutaYpHbVonMQwHCB8EyUwQfhiKo3luQe99Nqj1JhRZ7N3BCZ3g==}
+    engines: {node: '>=8'}
 
   entities@4.5.0:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
@@ -13239,7 +13257,7 @@ snapshots:
 
   '@scure/bip32@1.7.0':
     dependencies:
-      '@noble/curves': 1.9.1
+      '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/base': 1.2.6
 
@@ -16339,6 +16357,12 @@ snapshots:
       lodash: 4.17.21
       mime: 2.6.0
 
+  assign-deep@1.0.1:
+    dependencies:
+      assign-symbols: 2.0.2
+
+  assign-symbols@2.0.2: {}
+
   ast-parents@0.0.1: {}
 
   ast-types@0.13.4:
@@ -17220,6 +17244,10 @@ snapshots:
       - utf-8-validate
 
   engine.io-parser@5.2.3: {}
+
+  engine@1.0.0:
+    dependencies:
+      assign-deep: 1.0.1
 
   entities@4.5.0: {}
 
