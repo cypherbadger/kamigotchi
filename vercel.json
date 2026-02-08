@@ -1,5 +1,6 @@
 {
   "buildCommand": "bash vercel.sh",
+  "outputDirectory": "packages/client/dist",
   "headers": [
     {
       "source": "/",
