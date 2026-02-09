@@ -49,13 +49,11 @@ contract CoinFlipSystem is System {
     require(wager >= MIN_WAGER, "CoinFlip: wager below minimum");
     require(wager <= MAX_WAGER, "CoinFlip: wager above maximum");
 
-    // resolve the caller's account entity
-    uint256 accID = LibAccount.getFromOperator(components, msg.sender);
-    require(accID != 0, "CoinFlip: no account");
+    // resolve the caller's account entity via operator lookup
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
-    // verify balance
-    uint256 balInvID = LibInventory.genID(accID, MUSU_INDEX);
-    uint256 balance = _getBalance(balInvID);
+    // verify MUSU balance
+    uint256 balance = LibInventory.getBalanceOf(components, accID, MUSU_INDEX);
     require(balance >= wager, "CoinFlip: insufficient MUSU");
 
     // generate pseudo-random outcome from block context
@@ -86,15 +84,6 @@ contract CoinFlipSystem is System {
 
     // emit event for client to read outcome
     _emitFlipEvent(accID, wager, choice, won);
-  }
-
-  function _getBalance(uint256 invID) internal view returns (uint256) {
-    // use ValueComponent directly to check balance
-    (bool success, bytes memory data) = address(components).staticcall(
-      abi.encodeWithSignature("getValue(uint256)", invID)
-    );
-    if (!success || data.length == 0) return 0;
-    return abi.decode(data, (uint256));
   }
 
   function _emitFlipEvent(
