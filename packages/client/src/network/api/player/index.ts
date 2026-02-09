@@ -24,13 +24,6 @@ export function createPlayerAPI(txQueue: TxQueue) {
   }
 
   /////////////////
-  //   COIN FLIP
-
-  function coinFlip(choice: number, wager: BigNumberish) {
-    return systems['system.coinflip'].executeTyped(choice, wager);
-  }
-
-  /////////////////
   //   SCAVENGE
 
   // @dev claim scavenge points
@@ -56,6 +49,5 @@ export function createPlayerAPI(txQueue: TxQueue) {
     scavenge: {
       claim: claimScavenge,
     },
-    coinFlip,
   };
 }

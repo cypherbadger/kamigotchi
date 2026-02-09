@@ -13,8 +13,28 @@ import { getItemBalance } from 'network/shapes/Item';
 import { didActionSucceed } from 'network/utils';
 import { playClick, playSuccess, playError } from 'utils/sounds';
 
+/**
+ * Coin Flip -- client-side pseudo-random game using ItemTransferSystem.
+ *
+ * How it works:
+ * - Player picks HEADS or TAILS and sets a wager amount.
+ * - A pseudo-random flip is computed client-side.
+ * - If the player LOSES: their MUSU is transferred to the HOUSE account
+ *   via the already-deployed `system.item.transfer`.
+ * - If the player WINS: no on-chain transfer (house pays from its balance
+ *   when an admin settles, or the house account auto-sends via a separate flow).
+ *
+ * The HOUSE_ACCOUNT_ID should be the entityID of a dedicated "house" account
+ * that holds a MUSU bankroll inside the World.
+ */
+
+// --------- CONFIG ---------
+// TODO: Replace with your actual house account entityID in the World
+const HOUSE_ACCOUNT_ID = '0x0000000000000000000000000000000000000000000000000000000000000000';
+
 const MIN_WAGER = 10;
 const MAX_WAGER = 10000;
+const TRANSFER_FEE = 15; // MUSU fee charged by ItemTransferSystem
 const PRESETS = [10, 50, 100, 500, 1000];
 
 type FlipResult = { won: boolean; choice: 'HEADS' | 'TAILS'; wager: number } | null;
@@ -25,16 +45,17 @@ export const CoinFlipModal: UIComponent = {
   Render: () => {
     const layers = useLayers();
 
-    const { network, utils } = (() => {
+    const { network, utils, accountID } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
-      const accountID = world.entities[accountEntity];
+      const accID = world.entities[accountEntity];
 
       return {
         network,
+        accountID: accID,
         utils: {
-          getMusuBalance: () => getItemBalance(world, components, accountID, MUSU_INDEX),
+          getMusuBalance: () => getItemBalance(world, components, accID, MUSU_INDEX),
         },
       };
     })();
@@ -63,40 +84,60 @@ export const CoinFlipModal: UIComponent = {
 
     const balance = utils.getMusuBalance();
     const choiceLabel = choice === 0 ? 'HEADS' : 'TAILS';
+    const totalCost = wager + TRANSFER_FEE; // player needs wager + 15 fee for transfer
 
     const adjustWager = (delta: number) => {
-      setWager((prev) => Math.max(MIN_WAGER, Math.min(MAX_WAGER, Math.min(balance, prev + delta))));
+      setWager((prev) => {
+        const maxAffordable = Math.max(0, balance - TRANSFER_FEE);
+        return Math.max(MIN_WAGER, Math.min(MAX_WAGER, Math.min(maxAffordable, prev + delta)));
+      });
+    };
+
+    /////////////////
+    // PSEUDO-RANDOM FLIP (client-side)
+
+    const computeFlip = (playerChoice: number): boolean => {
+      // Use multiple entropy sources for pseudo-randomness
+      const now = Date.now();
+      const entropy = now ^ (Math.random() * 0xffffffff) ^ (wager * 7919) ^ (playerChoice * 104729);
+      const hash = ((entropy >>> 0) * 2654435761) >>> 0; // Knuth multiplicative hash
+      const outcome = hash % 2; // 0 or 1
+      return outcome === playerChoice;
     };
 
     /////////////////
     // ACTIONS
 
     const flipCoin = async () => {
-      if (wager > balance || wager < MIN_WAGER) return;
+      if (wager < MIN_WAGER || totalCost > balance) return;
       playClick();
       setIsDisabled(true);
       setFlipState('FLIPPING');
       setResult(null);
 
-      const transaction = actions.add({
-        action: 'CoinFlip',
-        params: [choice, wager],
-        description: `Flipping coin: ${wager} MUSU on ${choiceLabel}`,
-        execute: async () => {
-          return api.player.coinFlip(choice, wager);
-        },
-      });
+      // Compute outcome first
+      const won = computeFlip(choice);
 
-      const completed = await didActionSucceed(actions.Action, transaction);
+      if (!won) {
+        // PLAYER LOST: Transfer wager to house account
+        const transaction = actions.add({
+          action: 'CoinFlipLoss',
+          params: [[MUSU_INDEX], [wager], HOUSE_ACCOUNT_ID],
+          description: `Lost coin flip: sending ${wager} MUSU to house`,
+          execute: async () => {
+            return api.player.items.transfer([MUSU_INDEX], [wager], HOUSE_ACCOUNT_ID);
+          },
+        });
 
-      // Simulate outcome on client for immediate feedback
-      // The actual outcome is determined by the contract
+        await didActionSucceed(actions.Action, transaction);
+      }
+      // If player WON: house would need to transfer to player.
+      // For now the win is visual -- the house settles winnings separately
+      // or you can trigger a transfer from the house wallet here if you
+      // have the house wallet connected as a signer.
+
+      // Show result after animation
       setTimeout(() => {
-        // Use a simple pseudo-random for visual display
-        // The real result comes from the chain
-        const clientSeed = Date.now() ^ (wager * (choice + 1));
-        const won = completed ? clientSeed % 2 === choice : false;
-
         const flipResult: FlipResult = {
           won,
           choice: choiceLabel,
@@ -133,6 +174,7 @@ export const CoinFlipModal: UIComponent = {
     const FooterRenderer = (
       <Footer>
         <BalanceRow>
+          <FeeNote>Transfer fee: {TRANSFER_FEE} MUSU</FeeNote>
           <MusuIcon src={ItemImages.musu} />
           <BalanceText>{balance.toLocaleString()} MUSU</BalanceText>
         </BalanceRow>
@@ -208,7 +250,7 @@ export const CoinFlipModal: UIComponent = {
             </WagerButton>
           </WagerRow>
           <PresetRow>
-            {PRESETS.filter((p) => p <= balance).map((preset) => (
+            {PRESETS.filter((p) => p + TRANSFER_FEE <= balance).map((preset) => (
               <PresetButton
                 key={preset}
                 disabled={isDisabled}
@@ -220,12 +262,12 @@ export const CoinFlipModal: UIComponent = {
                 {preset}
               </PresetButton>
             ))}
-            {balance >= MIN_WAGER && (
+            {balance > MIN_WAGER + TRANSFER_FEE && (
               <PresetButton
                 disabled={isDisabled}
                 onClick={() => {
                   playClick();
-                  setWager(Math.min(balance, MAX_WAGER));
+                  setWager(Math.min(balance - TRANSFER_FEE, MAX_WAGER));
                 }}
               >
                 MAX
@@ -233,9 +275,14 @@ export const CoinFlipModal: UIComponent = {
             )}
           </PresetRow>
 
+          {/* COST SUMMARY */}
+          <CostSummary>
+            Wager: {wager} + Fee: {TRANSFER_FEE} = Total: {totalCost} MUSU
+          </CostSummary>
+
           {/* FLIP BUTTON */}
           <FlipButton
-            disabled={isDisabled || wager > balance || wager < MIN_WAGER}
+            disabled={isDisabled || totalCost > balance || wager < MIN_WAGER}
             onClick={flipCoin}
           >
             {flipState === 'FLIPPING' ? 'Flipping...' : `Flip for ${wager} MUSU`}
@@ -350,6 +397,13 @@ const BalanceRow = styled.div`
   display: flex;
   align-items: center;
   gap: 0.3vw;
+  width: 100%;
+  justify-content: space-between;
+`;
+
+const FeeNote = styled.span`
+  font-size: 0.6vw;
+  color: #666;
 `;
 
 const MusuIcon = styled.img`
@@ -514,6 +568,12 @@ const PresetButton = styled.button`
     opacity: 0.4;
     cursor: not-allowed;
   }
+`;
+
+const CostSummary = styled.div`
+  font-size: 0.6vw;
+  color: #666;
+  letter-spacing: -0.02vw;
 `;
 
 const FlipButton = styled.button`
