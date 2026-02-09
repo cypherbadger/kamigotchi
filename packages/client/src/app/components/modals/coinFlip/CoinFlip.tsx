@@ -65,6 +65,14 @@ export const CoinFlipModal: UIComponent = {
     const coinFlipVisible = useVisibility((s) => s.modals.coinFlip);
     const setModals = useVisibility((s) => s.setModals);
 
+    // Debug: Log account ID to console
+    useEffect(() => {
+      if (coinFlipVisible) {
+        console.log('[v0] Your Account ID:', accountID);
+        console.log('[v0] House Account ID:', HOUSE_ACCOUNT_ID);
+      }
+    }, [coinFlipVisible, accountID]);
+
     const [wager, setWager] = useState(50);
     const [choice, setChoice] = useState<0 | 1>(0); // 0 = heads, 1 = tails
     const [flipState, setFlipState] = useState<FlipState>('IDLE');
@@ -312,6 +320,12 @@ export const CoinFlipModal: UIComponent = {
               </HistoryList>
             </HistorySection>
           )}
+
+          {/* DEBUG: Account ID Display */}
+          <DebugInfo>
+            <DebugLine>Your Account ID: {accountID}</DebugLine>
+            <DebugLine>House Account ID: {HOUSE_ACCOUNT_ID}</DebugLine>
+          </DebugInfo>
         </Content>
       </ModalWrapper>
     );
@@ -632,4 +646,23 @@ const HistoryItem = styled.span<{ $won: boolean }>`
   background: ${({ $won }) => ($won ? '#0a1a0a' : '#1a0a0a')};
   color: ${({ $won }) => ($won ? '#4c4' : '#c44')};
   border: 0.05vw solid ${({ $won }) => ($won ? '#2a2' : '#a22')};
+`;
+
+const DebugInfo = styled.div`
+  margin-top: 1vw;
+  padding: 0.5vw;
+  background: #0a0a0a;
+  border: 0.1vw solid #333;
+  border-radius: 0.3vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2vw;
+  width: 100%;
+`;
+
+const DebugLine = styled.div`
+  font-size: 0.5vw;
+  color: #666;
+  font-family: monospace;
+  word-break: break-all;
 `;
