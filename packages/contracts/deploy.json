@@ -275,6 +275,10 @@
       "writeAccess": ["TimeLast", "Value"]
     },
     {
+      "name": "CoinFlipSystem",
+      "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "TimeLast", "Value"]
+    },
+    {
       "name": "CraftSystem",
       "writeAccess": [
         "EntityType",
